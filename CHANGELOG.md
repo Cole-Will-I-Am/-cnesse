@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T13:46:05+00:00 · `a2ada035fced` · **rejected** · score 0.81
+- Created pipeline module composing 4 existing modules (encoding→canonical→hash_chain→provenance) with comprehensive property tests covering edge cases, determinism, and chain integrity.
+- _why:_ held_for_review: codex flagged P1 | goal: 
+
 ## 2026-06-07T13:27:55+00:00 · `100101156bef` · **merged** · score 0.77
 - Replaced unittest-based tests with comprehensive pytest-based test suite for ecnyss.util.results covering all planned test classes: TestConstructors, TestMap, TestBind, TestUnwrap, TestUnwrapOr, TestExceptionPropagation, TestNoneHandling, TestNestedResults, TestPatternMatching, TestHashability, and
 - _why:_ approved (score 0.72 >= 0.0+0.7) | goal: **Goal:** Add `tests/test_results.py` with comprehensive pure-logic unit tests for `ecnyss/util/results.py`, exercising 
