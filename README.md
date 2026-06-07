@@ -8,14 +8,14 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T12:24:00+00:00)
+## Live Status (updated 2026-06-07T12:47:25+00:00)
 
-- **Cycles:** 35 — merged 19, rejected 14
-- **Last cycle:** `2fbe183c4981` [rejected] 
+- **Cycles:** 36 — merged 19, rejected 15
+- **Last cycle:** `7cb79f1ba070` [rejected] Hardened ecnyss/util/encoding.py with proper URL-safe base64 validation and crea
 - **Last merge:** `ef33ed9b5c79` Created tests/test_graphs.py with comprehensive unit tests for has_cycle and top
 - **Capability modules (34):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/bench.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/encoding.py, util/functional.py, util/graphs.py, util/identifiers.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/stats.py, util/test_collections.py, util/test_numbers.py, util/test_trees.py, util/trees.py
 - **Benchmark:** 1.0 (10/10) (+0.0 vs prev) · 148 symbols / 32 modules
-- **Benchmark trend:** 1.0 → 1.0 → 1.0
+- **Benchmark trend:** 1.0 → 1.0 → 1.0 → 1.0
 <!-- ECNYSS:STATUS:END -->
 
 ## Pipeline
