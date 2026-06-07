@@ -2,6 +2,12 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T14:06:14+00:00 · `566d29d8a439` · **rejected**
+- **Goal:** Build `ecnyss/store/kv.py` (+ `ecnyss/store/__init__.py`): a file-backed `KVStore` that persists to disk, composing `ecnyss.canonical` for serialization and `ecnyss.util.results` for error handling. Ship `tests/test_kv.py` with cross-instance round-trip and crash-consistency assertions.
+
+*
+- _why:_ coder produced no valid change
+
 ## 2026-06-07T13:46:05+00:00 · `a2ada035fced` · **rejected** · score 0.81
 - Created pipeline module composing 4 existing modules (encoding→canonical→hash_chain→provenance) with comprehensive property tests covering edge cases, determinism, and chain integrity.
 - _why:_ held_for_review: codex flagged P1 | goal: 
