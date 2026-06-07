@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T15:07:07+00:00 · `6605dc1050c6` · **rejected** · score 0.83
+- Create policy_engine.py composing existing ecnyss modules for policy-governed execution
+- _why:_ held_for_review: codex flagged P1 | goal: 
+
 ## 2026-06-07T14:43:15+00:00 · `6a9b7f4d325d` · **rejected** · score 0.22
 - Created ecnyss/store package with KVStore implementation and comprehensive tests. KVStore provides file-backed key-value storage with atomic writes using tempfile + os.replace. All public methods return Result types (Ok/Err) with no exceptions escaping. Tests cover round-trip, cross-instance persist
 - _why:_ sandbox tests failed | goal: Build `ecnyss/store/__init__.py` and `ecnyss/store/kv.py`: a file-backed `KVStore` with atomic JSON persistence (`os.rep
