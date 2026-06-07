@@ -9,6 +9,7 @@ autonomy:
   auto_merge: true
   merge_method: squash
   require_isolation: true
+  repair_loops: 2   # when jailed tests fail, let the coder repair & re-test N times
 
 
 # isolation: how generated code is executed during sandbox testing.

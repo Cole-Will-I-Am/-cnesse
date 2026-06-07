@@ -202,6 +202,28 @@ class Orchestrator:
         report = self.sandbox.evaluate(files, action)
         tests_passed = bool(report.get("tests", {}).get("passed"))
 
+        # Repair loop: a single bad test shouldn't kill the change. Feed the jail
+        # failure back to the coder for bounded repair passes, then re-test.
+        repair_loops = int(self.autonomy.get("repair_loops", 2))
+        attempt = 0
+        while not tests_passed and attempt < repair_loops:
+            attempt += 1
+            fix_out = self.agents["coder"].run(
+                f"{policy}\n\nThe tests FAILED in the isolated jail. Fix the code so ALL tests "
+                f"pass. Return ONLY the strict JSON change object with COMPLETE corrected files.\n"
+                f"TEST OUTPUT:\n{report.get('tests', {}).get('detail', '')}\n\nCURRENT FILES:" +
+                "".join(f"\n=== {f['path']} ===\n{f['content']}\n" for f in files))
+            fixed = extract_json(fix_out)
+            fixed_files = [f for f in (fixed.get("files", []) if fixed else [])
+                           if isinstance(f, dict) and f.get("path") and f.get("content")]
+            if not fixed_files or any(f["path"] in self.protected_paths for f in fixed_files):
+                break
+            files = fixed_files
+            action = "modify" if any((self.root / f["path"]).exists() for f in files) else "create"
+            report = self.sandbox.evaluate(files, action)
+            tests_passed = bool(report.get("tests", {}).get("passed"))
+        result["repair_attempts"] = attempt
+
         # Red team.
         rt = self.agents["redteam"].run(
             f"PROPOSED CHANGE: {change.get('summary','')}\nACTION: {action}\nFILES: {[f['path'] for f in files]}\n"
