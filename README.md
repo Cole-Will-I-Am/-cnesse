@@ -8,12 +8,12 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T10:23:38+00:00)
+## Live Status (updated 2026-06-07T10:45:54+00:00)
 
-- **Cycles:** 29 — merged 15, rejected 12
-- **Last cycle:** `0df7e818407d` [approved] Created ecnyss/util/stats.py with pure-stdlib descriptive statistics functions (
-- **Last merge:** `0df7e818407d` Created ecnyss/util/stats.py with pure-stdlib descriptive statistics functions (
-- **Capability modules (34):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/encoding.py, util/functional.py, util/graphs.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/stats.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_numbers.py, util/test_trees.py, util/trees.py
+- **Cycles:** 30 — merged 16, rejected 12
+- **Last cycle:** `e05aa0ad8ca3` [approved] Created ecnyss/util/identifiers.py with 6 pure-stdlib identifier functions (gene
+- **Last merge:** `e05aa0ad8ca3` Created ecnyss/util/identifiers.py with 6 pure-stdlib identifier functions (gene
+- **Capability modules (35):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/encoding.py, util/functional.py, util/graphs.py, util/identifiers.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/stats.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_numbers.py, util/test_trees.py, util/trees.py
 <!-- ECNYSS:STATUS:END -->
 
 ## Pipeline
