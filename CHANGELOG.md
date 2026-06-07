@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T10:23:37+00:00 · `0df7e818407d` · **merged** · score 0.8
+- Created ecnyss/util/stats.py with pure-stdlib descriptive statistics functions (mean, median, variance, stdev, percentile, quantile, min_max, sum, count) and tests/test_stats.py with comprehensive unit tests covering all functions including edge cases, bounds checking, and empty input handling.
+- _why:_ approved (score 0.84 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/stats.py` providing pure-stdlib descriptive statistics (mean, median, variance, percentile, e
+
 ## 2026-06-07T10:04:36+00:00 · `f95916aa0acc` · **merged** · score 0.88
 - Created ecnyss/util/encoding.py with 8 pure-stdlib encoding functions (b64_encode/decode, b64url_encode/decode, hex_encode/decode, percent_encode/decode) and tests/test_encoding.py with comprehensive unit tests covering round-trips, known vectors, edge cases, and error handling.
 - _why:_ approved (score 0.8909 >= 0.0+0.6) | goal: 
