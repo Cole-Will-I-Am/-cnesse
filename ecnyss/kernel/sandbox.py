@@ -104,7 +104,14 @@ class Sandbox:
         """Build the test command. Prefer a systemd-run jail: non-root, no
         network, fs read-only outside the worktree, memory/CPU/time capped.
         Falls back to a bare subprocess only if systemd-run is unavailable."""
-        inner = ["python3", "-m", "unittest", "discover", "-s", "tests"]
+        # Run tests/ AND any test_*.py under ecnyss/ — so a test placed in the
+        # wrong directory still runs and can never silently skip the gate again.
+        cmd_str = (
+            "python3 -m unittest discover -s tests -p 'test_*.py' && "
+            "if find ecnyss -name 'test_*.py' | grep -q .; then "
+            "python3 -m unittest discover -s ecnyss -p 'test_*.py' -t .; fi"
+        )
+        inner = ["/bin/bash", "-c", cmd_str]
         if not (self.iso.get("enabled", True) and shutil.which("systemd-run")):
             return inner, "unisolated (systemd-run unavailable)"
         # nobody must be able to read/write the throwaway worktree.

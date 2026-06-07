@@ -39,5 +39,9 @@ def round_to(value: float, precision: int) -> float:
     return math.floor(value * factor + 0.5) / factor if value >= 0 else math.ceil(value * factor - 0.5) / factor
 
 def is_close(a: float, b: float, *, rel_tol: float = 1e-9, abs_tol: float = 0.0) -> bool:
-    """Float comparison with relative and absolute tolerance (PEP 485)."""
-    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+    """Float comparison with relative and absolute tolerance (PEP 485).
+
+    Delegates to math.isclose so infinities are handled correctly
+    (inf is close only to itself, never to a finite value).
+    """
+    return math.isclose(a, b, rel_tol=rel_tol, abs_tol=abs_tol)

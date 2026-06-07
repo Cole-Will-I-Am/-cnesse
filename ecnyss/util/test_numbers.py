@@ -86,9 +86,9 @@ class TestIsClose(unittest.TestCase):
         self.assertTrue(is_close(0.0, 0.0))
         self.assertTrue(is_close(1e-15, 0.0, abs_tol=1e-10))
     def test_nan_inf(self):
-        self.assertFalse(is_close(float('nan'), float('nan')))
-        self.assertFalse(is_close(float('inf'), float('inf')))
-        self.assertFalse(is_close(float('inf'), 1e300))
+        self.assertFalse(is_close(float('nan'), float('nan')))   # nan close to nothing
+        self.assertTrue(is_close(float('inf'), float('inf')))    # inf is close to itself (PEP 485)
+        self.assertFalse(is_close(float('inf'), 1e300))          # inf not close to a finite value
 
 if __name__ == "__main__":
     unittest.main()
