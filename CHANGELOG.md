@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T07:03:17+00:00 · `43ae52cfafec` · **merged** · score 0.75
+- Created ecnyss/util/diff.py with deep_equal and deep_diff functions, plus ecnyss/util/test_diff.py with comprehensive unit tests. Both files are pure stdlib, no I/O, following the pattern of dicts.py/test_dicts.py.
+- _why:_ approved (score 0.8082 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/diff.py` — pure-stdlib structural diff utilities (`deep_diff`, `deep_equal`) for nested dicts
+
 ## 2026-06-07T06:44:30+00:00 · `8bbb59f87e33` · **merged** · score 0.89
 - Created ecnyss/util/trees.py with get_in, set_in, update_in, walk functions and ecnyss/util/test_trees.py with 12 pure-logic unit tests
 - _why:_ approved (score 0.8915 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/trees.py` with pure-stdlib nested-structure utilities (`get_in`, `set_in`, `update_in`, `walk
