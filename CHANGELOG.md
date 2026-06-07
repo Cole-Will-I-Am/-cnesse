@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T08:43:47+00:00 · `12822b72c514` · **merged** · score 0.92
+- Add ecnyss/util/graphs.py with has_cycle and topological_sort DAG primitives, plus tests/test_graphs.py with 19 pure-logic unit tests
+- _why:_ approved (score 0.9146 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/graphs.py` — pure-stdlib DAG primitives (`topological_sort`, `has_cycle`) with companion `tes
+
 ## 2026-06-07T08:25:50+00:00 · `631a92604275` · **merged** · score 0.88
 - Added ecnyss/util/numbers.py with 7 pure-stdlib numeric primitives (clamp, sign, lerp, normalize, remap, round_to, is_close) and comprehensive unit tests in ecnyss/util/test_numbers.py. Updated ecnyss/util/__init__.py to export new functions. All 28 test cases cover edge cases and error handling.
 - _why:_ approved (score 0.8905 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/numbers.py` with pure-stdlib numeric primitives (clamp, sign, lerp, normalize, remap, round_t
