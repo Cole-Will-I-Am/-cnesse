@@ -1,0 +1,9 @@
+[project]
+name = "ecnyss"
+version = "0.0.1"
+description = "Ecnyss v2 — sandboxed, multi-agent, Babel-governed autonomous engineering lab"
+requires-python = ">=3.11"
+dependencies = ["PyYAML>=6.0"]
+
+[tool.setuptools.packages.find]
+include = ["ecnyss*"]

@@ -1,0 +1,16 @@
+# Capability-based permissions — powerful but not reckless.
+# Each scope maps to one of: allow | gated | human_required | forbidden
+#   allow         - the agent may do this autonomously
+#   gated         - allowed only behind sandbox + passing merge gate
+#   human_required - needs explicit human approval before applying
+#   forbidden     - never, under any circumstance
+permissions:
+  read_source: allow
+  write_docs: allow
+  write_tests: allow
+  write_core_logic: gated
+  delete_files: human_required
+  modify_auth_or_secrets: forbidden
+  push_to_main: forbidden
+  create_branch: allow
+  open_pull_request: gated

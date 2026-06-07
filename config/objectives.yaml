@@ -1,0 +1,15 @@
+# Formal objective model — "improve yourself" made measurable.
+# Weights sum to 1.0. Every proposal is scored against these before
+# implementation (predicted) and after testing (actual). The merge gate
+# compares the two; a change that does not improve the weighted score is
+# rejected.
+objectives:
+  correctness: 0.35
+  test_coverage: 0.20
+  maintainability: 0.15
+  simplicity: 0.10
+  capability_gain: 0.10
+  security: 0.10
+
+# Minimum post-test weighted score improvement over baseline to merge.
+merge_threshold: 0.0
