@@ -5,7 +5,7 @@
 agents:
   architect:
     model: ecnyss-architect:latest      # base: kimi-k2.6:cloud (thinking — tightly bounded)
-    prompt_char_budget: 16000
+    prompt_char_budget: 24000           # gets the COMPACT map (1 line/module) — scales
     num_predict: 4096
     temperature: 0.4
     timeout_sec: 180

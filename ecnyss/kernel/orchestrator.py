@@ -59,7 +59,7 @@ class Orchestrator:
             self.self_model.summary(),
             self.world_model.summary(),
             "OBJECTIVES (weights):\n" + "\n".join(f"  {k}: {v}" for k, v in self.objectives.items()),
-            self.semantic.summary(),
+            self.semantic.compact_summary(),   # one line/module — scales, no truncation
             self.episodic.summary(5),
             self.roadmap.summary(),
         ])
@@ -211,8 +211,12 @@ class Orchestrator:
         )
         goal = self.agents["architect"].run(
             f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
+        # Retrieval: pull FULL detail of only the modules relevant to the goal,
+        # instead of dumping the whole (growing) map and truncating.
+        relevant = self.semantic.retrieve(goal)
         plan = self.agents["planner"].run(
-            f"GOAL:\n{goal}\n\n{policy}\n\n{observation}\n\nProduce a minimal one-cycle change spec (<=3 files + which pure-logic tests verify it).")
+            f"GOAL:\n{goal}\n\n{policy}\n\n{relevant}\n\nProduce a minimal one-cycle change spec "
+            "(<=3 files + which pure-logic tests verify it). Build on the retrieved modules above.")
         # Coder gets the plan, the list of files that ALREADY EXIST (so it uses
         # modify, never recreates), and the current content of likely targets.
         import re
@@ -223,7 +227,8 @@ class Orchestrator:
         )
         hinted = [f for f in re.findall(r"[\w/]+\.py", plan) if f in existing][:3]
         coder_out = self.agents["coder"].run(
-            f"PLAN:\n{plan}\n\n{policy}\n\nEXISTING FILES (use action=modify and return the FULL "
+            f"PLAN:\n{plan}\n\n{policy}\n\n{self.semantic.retrieve(plan)}\n\n"
+            f"EXISTING FILES (use action=modify and return the FULL "
             f"updated file for any of these; only use action=create for a brand-new path "
             f"NOT in this list):\n" + "\n".join(existing) +
             f"\n\nCURRENT CONTENT OF LIKELY TARGETS:\n{self._read_files(hinted)}\n\n"

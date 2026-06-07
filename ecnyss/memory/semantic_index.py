@@ -77,3 +77,32 @@ class SemanticIndex:
                 api = ", ".join(e.value.get("public_api", [])[:6])
                 rows.append(f"  {e.key}: {e.value.get('purpose','')[:70]} | api: {api}")
         return "CODEBASE MAP (trusted facts):\n" + ("\n".join(rows) or "  (none)")
+
+    def compact_summary(self) -> str:
+        """One line per module (purpose only, no API). Scales as the repo grows —
+        the Architect's situational-awareness view that won't get truncated."""
+        rows = [f"  {e.key}: {e.value.get('purpose','')[:80]}"
+                for e in self.load() if e.trusted()]
+        return "CAPABILITY MAP (modules):\n" + ("\n".join(rows) or "  (none)")
+
+    def retrieve(self, query: str, k: int = 8) -> str:
+        """Retrieve the FULL detail (purpose + public API) of the modules most
+        relevant to a query — targeted depth for the Planner/Coder instead of
+        dumping the whole map. Simple token-overlap ranking (stdlib only)."""
+        import re
+        terms = {t for t in re.findall(r"[a-z_]{3,}", query.lower())}
+        scored = []
+        for e in self.load():
+            if not e.trusted():
+                continue
+            hay = (e.key + " " + e.value.get("purpose", "") + " " +
+                   " ".join(e.value.get("public_api", []))).lower()
+            score = sum(1 for t in terms if t in hay)
+            if score:
+                scored.append((score, e))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        rows = []
+        for _, e in scored[:k]:
+            api = ", ".join(e.value.get("public_api", [])[:12])
+            rows.append(f"  {e.key}: {e.value.get('purpose','')[:90]}\n    api: {api}")
+        return "RELEVANT MODULES (retrieved):\n" + ("\n".join(rows) or "  (none matched)")
