@@ -48,6 +48,7 @@ class Orchestrator:
         safety_path = self.root / "config" / "safety.yaml"
         safety = yaml.safe_load(safety_path.read_text(encoding="utf-8")) if safety_path.exists() else {}
         self.protected_paths = set((safety or {}).get("protected_paths", []))
+        self.autonomy = (safety or {}).get("autonomy", {}) or {}
 
     # ---- helpers -----------------------------------------------------------
     def _observe(self) -> str:
@@ -78,8 +79,13 @@ class Orchestrator:
         return subprocess.run(["git", "-C", str(cwd or self.root), *args],
                               capture_output=True, text=True, timeout=timeout)
 
-    def _promote(self, cycle_id: str, files: list[dict[str, str]], summary: str) -> dict[str, Any]:
-        """Build the approved change on a fresh branch + push for PR. Never main."""
+    def _promote(self, cycle_id: str, files: list[dict[str, str]], summary: str,
+                 auto_merge_ok: bool = False) -> dict[str, Any]:
+        """Build the approved change on a fresh branch + push + open a PR.
+
+        If auto_merge_ok, the PR is then merged to main automatically (full
+        autonomy). Only ever reached for non-governance, gate-approved changes.
+        """
         branch = f"ecnyss/cycle-{cycle_id}"
         wt = Path(tempfile.mkdtemp(prefix="ecnyss_promote_"))
         try:
@@ -105,7 +111,18 @@ class Orchestrator:
                     cwd=str(self.root), capture_output=True, text=True, timeout=60,
                 )
                 pr_url = pr.stdout.strip() if pr.returncode == 0 else f"(pr_failed: {pr.stderr.strip()[:120]})"
-            return {"promoted": pushed, "branch": branch, "pr_url": pr_url}
+            merged = False
+            merge_detail = "auto_merge_off" if not auto_merge_ok else "not_attempted"
+            if pushed and auto_merge_ok:
+                method = f"--{self.autonomy.get('merge_method', 'squash')}"
+                mg = subprocess.run(
+                    ["gh", "pr", "merge", branch, "--repo", "Cole-Will-I-Am/-cnesse",
+                     method, "--admin", "--delete-branch"],
+                    cwd=str(self.root), capture_output=True, text=True, timeout=90)
+                merged = mg.returncode == 0
+                merge_detail = "merged" if merged else f"merge_failed: {mg.stderr.strip()[:140]}"
+            return {"promoted": pushed, "branch": branch, "pr_url": pr_url,
+                    "merged": merged, "merge_detail": merge_detail}
         finally:
             self._git("worktree", "remove", "--force", str(wt))
 
@@ -189,7 +206,13 @@ class Orchestrator:
             tests_passed=tests_passed, score=score, baseline=0.0, threshold=self.merge_threshold,
             redteam_blocked=redteam_blocked, maintainer_approved=maintainer_approved, permission_ok=permission_ok)
 
-        promote = self._promote(cycle_id, files, change.get("summary", "evolution")) if approved else {"promoted": False}
+        isolation_mode = report.get("tests", {}).get("isolation", "")
+        auto_merge_ok = (
+            bool(self.autonomy.get("auto_merge"))
+            and (not self.autonomy.get("require_isolation", True) or "jail" in isolation_mode)
+        )
+        promote = (self._promote(cycle_id, files, change.get("summary", "evolution"), auto_merge_ok)
+                   if approved else {"promoted": False})
 
         result.update({
             "action": action, "files": [f["path"] for f in files], "tests_passed": tests_passed,

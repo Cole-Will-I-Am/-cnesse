@@ -1,4 +1,16 @@
 # Safety + containment policy.
+# autonomy: full self-amplification. When auto_merge is true, a change that
+# passes the FULL gate (jailed tests + red team + maintainer + objective score)
+# AND touches no protected path is merged to main automatically. Governance
+# changes are never auto-merged (see protected_paths); they always require a
+# human. require_isolation means auto-merge only happens if tests actually ran
+# in the systemd-run jail (never on the unisolated fallback).
+autonomy:
+  auto_merge: true
+  merge_method: squash
+  require_isolation: true
+
+
 # isolation: how generated code is executed during sandbox testing.
 isolation:
   enabled: true
