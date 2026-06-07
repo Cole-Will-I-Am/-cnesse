@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T11:26:49+00:00 · `5dac2a4da46a` · **merged** · score 0.8
+- Created tests/test_intervals.py with comprehensive unit tests for all public functions in ecnyss.util.intervals (contains, intersect, merge, overlap, union). Tests follow existing patterns from ecnyss/util/test_numbers.py using unittest.TestCase with descriptive method names. Includes edge cases for
+- _why:_ approved (score 0.8793 >= 0.0+0.6) | goal: **Goal:** Create `tests/test_intervals.py` with pure-stdlib unit tests for every public function in `ecnyss/util/interva
+
 ## 2026-06-07T11:04:38+00:00 · `802ef90f04fa` · **merged** · score 0.82
 - Created comprehensive unit tests for ecnyss.util.results module covering Ok, Err, and Result chaining operations with pure stdlib unittest.
 - _why:_ approved (score 0.8906 >= 0.0+0.6) | goal: Add comprehensive pure-stdlib unit tests for `ecnyss/util/results.py` under `tests/test_results.py`, covering `Ok`/`Err`
