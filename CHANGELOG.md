@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T13:27:55+00:00 · `100101156bef` · **merged** · score 0.77
+- Replaced unittest-based tests with comprehensive pytest-based test suite for ecnyss.util.results covering all planned test classes: TestConstructors, TestMap, TestBind, TestUnwrap, TestUnwrapOr, TestExceptionPropagation, TestNoneHandling, TestNestedResults, TestPatternMatching, TestHashability, and
+- _why:_ approved (score 0.72 >= 0.0+0.7) | goal: **Goal:** Add `tests/test_results.py` with comprehensive pure-logic unit tests for `ecnyss/util/results.py`, exercising 
+
 ## 2026-06-07T13:03:37+00:00 · `d1bb471e065b` · **rejected**
 - Composed higher-order merge decision capability by wiring provenance tracking into merge_gate. Modified merge_gate.py to attach Provenance evidence to all decisions, enhanced fitness.py to support composition with merge objectives, and added comprehensive mutation-strong tests in test_merge_gate_pro
 - _why:_ governance change requires explicit human authorization: ['ecnyss/evolution/merge_gate.py']
