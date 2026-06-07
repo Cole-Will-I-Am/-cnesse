@@ -8,12 +8,12 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T09:24:50+00:00)
+## Live Status (updated 2026-06-07T09:43:30+00:00)
 
-- **Cycles:** 26 — merged 12, rejected 12
-- **Last cycle:** `03ffd6ed4dc5` [approved] Created ecnyss/util/predicates.py with 12 pure-stdlib predicate combinators (all
-- **Last merge:** `03ffd6ed4dc5` Created ecnyss/util/predicates.py with 12 pure-stdlib predicate combinators (all
-- **Capability modules (31):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/functional.py, util/graphs.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_numbers.py, util/test_trees.py, util/trees.py
+- **Cycles:** 27 — merged 13, rejected 12
+- **Last cycle:** `b3eb697408e5` [approved] Added interval primitives module (ecnyss/util/intervals.py) with 6 pure function
+- **Last merge:** `b3eb697408e5` Added interval primitives module (ecnyss/util/intervals.py) with 6 pure function
+- **Capability modules (32):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/functional.py, util/graphs.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_numbers.py, util/test_trees.py, util/trees.py
 <!-- ECNYSS:STATUS:END -->
 
 ## Pipeline

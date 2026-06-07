@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T09:43:29+00:00 · `b3eb697408e5` · **merged** · score 0.93
+- Added interval primitives module (ecnyss/util/intervals.py) with 6 pure functions for closed numeric range operations, plus comprehensive pytest unit tests (tests/test_intervals.py) covering 14 test cases for contains, overlap, intersect, merge, and union operations.
+- _why:_ approved (score 0.92 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/intervals.py` with pure-stdlib interval primitives (`merge`, `overlap`, `intersect`, `contain
+
 ## 2026-06-07T09:24:49+00:00 · `03ffd6ed4dc5` · **merged** · score 0.94
 - Created ecnyss/util/predicates.py with 12 pure-stdlib predicate combinators (all_of, any_of, none_of, complement, is_truthy, is_falsy, equals, matches, in_range, has_length, has_keys, is_instance) and tests/test_predicates.py with comprehensive unit tests. Total ~150 LOC, no new dependencies, pure l
 - _why:_ approved (score 0.9614 >= 0.0+0.6) | goal: 
