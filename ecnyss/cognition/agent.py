@@ -59,6 +59,37 @@ def load_registry(config_path: str | Path) -> tuple[dict[str, Any], str]:
     return data.get("agents", {}), data.get("ollama_url", "http://127.0.0.1:11434")
 
 
+def parse_file_blocks(text: str) -> dict[str, Any] | None:
+    """Parse the coder's delimited envelope (no JSON escaping — robust for large
+    files). Expected form:
+
+        ACTION: create|modify
+        SUMMARY: one line
+        @@FILE: path/to/file.py@@
+        ...raw file content...
+        @@ENDFILE@@
+        (repeat)
+
+    Returns {"action","summary","files":[{path,content}]} or None if no blocks.
+    """
+    import re as _re
+    if "...done thinking." in text:
+        text = text.split("...done thinking.", 1)[1]
+    blocks = _re.findall(r"@@FILE:\s*(.+?)@@\n(.*?)\n@@ENDFILE@@", text, _re.DOTALL)
+    if not blocks:
+        return None
+    files = [{"path": p.strip(), "content": c} for p, c in blocks if p.strip()]
+    if not files:
+        return None
+    action_m = _re.search(r"ACTION:\s*(create|modify|refactor)", text, _re.I)
+    summary_m = _re.search(r"SUMMARY:\s*(.+)", text)
+    return {
+        "action": (action_m.group(1).lower() if action_m else "create"),
+        "summary": (summary_m.group(1).strip()[:200] if summary_m else files[0]["path"]),
+        "files": files,
+    }
+
+
 def extract_json(text: str) -> dict[str, Any] | None:
     """Pull the first valid JSON object out of model output (handles think/fences)."""
     marker = "...done thinking."

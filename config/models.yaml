@@ -18,7 +18,7 @@ agents:
   coder:
     model: ecnyss-coder:latest          # base: qwen3.5:397b-cloud
     prompt_char_budget: 48000
-    num_predict: 16384
+    num_predict: 28672                  # headroom for multi-file composed changes
     temperature: 0.15
     timeout_sec: 240
   redteam:

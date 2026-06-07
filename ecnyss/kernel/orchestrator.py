@@ -20,7 +20,7 @@ from typing import Any
 import yaml
 
 from ..protocol import CycleArtifact, HashChain, Provenance, Evidence, emit
-from ..cognition.agent import Agent, load_registry, extract_json
+from ..cognition.agent import Agent, load_registry, extract_json, parse_file_blocks
 from .permission_model import PermissionModel, Decision
 from .sandbox import Sandbox
 from .self_world import SelfModel, WorldModel
@@ -28,6 +28,19 @@ from ..evolution import merge_gate, fitness
 from ..memory.episodic_store import EpisodicStore
 from ..memory.semantic_index import SemanticIndex
 from ..memory.roadmap import Roadmap
+from ..memory.cooldown import Cooldown
+
+# Robust output envelope for the coder — raw file content between delimiters, no
+# JSON escaping (survives large files / quotes / backslashes).
+ENVELOPE = (
+    "OUTPUT FORMAT — use EXACTLY this, no JSON, no markdown fences:\n"
+    "ACTION: create|modify\n"
+    "SUMMARY: one line\n"
+    "@@FILE: relative/path.py@@\n"
+    "<full file content, verbatim>\n"
+    "@@ENDFILE@@\n"
+    "(repeat the @@FILE:...@@ ... @@ENDFILE@@ block for each file; output nothing else)"
+)
 
 
 class Orchestrator:
@@ -43,6 +56,7 @@ class Orchestrator:
         self.episodic = EpisodicStore(self.chain)
         self.semantic = SemanticIndex(self.root, self.root / "state" / "semantic_index.json")
         self.roadmap = Roadmap(self.root / "state" / "roadmap.json")
+        self.cooldown = Cooldown(self.root / "state" / "cooldown.json")
         self.self_model = SelfModel(self.root, self.permissions)
         self.world_model = WorldModel(self.root / "config" / "world.yaml")
         safety_path = self.root / "config" / "safety.yaml"
@@ -63,6 +77,11 @@ class Orchestrator:
             self.episodic.summary(5),
             self.roadmap.summary(),
         ])
+
+    def _goal_key(self, goal: str) -> str:
+        import re
+        m = re.search(r"[\w/]+\.py", goal)
+        return m.group(0) if m else " ".join(goal.lower().split())[:50]
 
     def _read_files(self, paths: list[str], budget: int = 30000) -> str:
         out, used = [], 0
@@ -214,8 +233,11 @@ class Orchestrator:
             "penalised by independent mutation scoring. A NEW subpackage (e.g. ecnyss/store/) "
             "MUST include an __init__.py or imports will fail."
         )
+        cooled = self.cooldown.cooled()
+        avoid = ("\n\nON COOLDOWN — these targets have failed repeatedly; do NOT propose them "
+                 "again, pick something different: " + ", ".join(cooled)) if cooled else ""
         goal = self.agents["architect"].run(
-            f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
+            f"Choose this cycle's single highest-leverage goal.\n\n{policy}{avoid}\n\n{observation}")
         # Retrieval: pull FULL detail of only the modules relevant to the goal,
         # instead of dumping the whole (growing) map and truncating.
         relevant = self.semantic.retrieve(goal)
@@ -236,15 +258,24 @@ class Orchestrator:
             f"EXISTING FILES (use action=modify and return the FULL "
             f"updated file for any of these; only use action=create for a brand-new path "
             f"NOT in this list):\n" + "\n".join(existing) +
-            f"\n\nCURRENT CONTENT OF LIKELY TARGETS:\n{self._read_files(hinted)}\n\n"
-            "Return ONLY the strict JSON change object with COMPLETE file content.")
-        change = extract_json(coder_out)
+            f"\n\nCURRENT CONTENT OF LIKELY TARGETS:\n{self._read_files(hinted)}\n\n" + ENVELOPE)
+        # Parse the delimited envelope; on parse failure, re-prompt (the single
+        # biggest robustness win — large files no longer die on JSON escaping).
+        change = parse_file_blocks(coder_out)
+        for _ in range(2):
+            if change and change.get("files"):
+                break
+            coder_out = self.agents["coder"].run(
+                "Your previous reply could not be parsed. Reply AGAIN using EXACTLY the "
+                "required format and nothing else.\n\n" + ENVELOPE)
+            change = parse_file_blocks(coder_out)
 
         result: dict[str, Any] = {"cycle_id": cycle_id, "goal": goal[:200]}
-        if not change or "files" not in change or not change.get("files"):
+        if not change or not change.get("files"):
+            self.cooldown.record(self._goal_key(goal))
             return self._record(cycle_id, basis_ref, rollback_ref, goal, "rejected",
-                                 why="coder produced no valid change",
-                                 evidence=[Evidence("coder", basis_ref, "invalid/empty JSON", 0.2)],
+                                 why="coder produced no parseable change after re-prompts",
+                                 evidence=[Evidence("coder", basis_ref, "unparseable envelope x3", 0.2)],
                                  result=result, extra={"rejected": "no_valid_change"})
 
         files = [f for f in change["files"] if isinstance(f, dict) and f.get("path") and f.get("content")]
@@ -262,6 +293,7 @@ class Orchestrator:
                        for p in self.protected_paths)
         touched_protected = sorted(f["path"] for f in files if _protected(f["path"]))
         if touched_protected:
+            self.cooldown.record(self._goal_key(goal))
             return self._record(
                 cycle_id, basis_ref, rollback_ref, change.get("summary", goal), "rejected",
                 why=f"governance change requires explicit human authorization: {touched_protected}",
@@ -279,11 +311,11 @@ class Orchestrator:
         while not tests_passed and attempt < repair_loops:
             attempt += 1
             fix_out = self.agents["coder"].run(
-                f"{policy}\n\nThe tests FAILED in the isolated jail. Fix the code so ALL tests "
-                f"pass. Return ONLY the strict JSON change object with COMPLETE corrected files.\n"
+                f"The tests FAILED in the isolated jail. Fix the code so ALL tests pass.\n"
                 f"TEST OUTPUT:\n{report.get('tests', {}).get('detail', '')}\n\nCURRENT FILES:" +
-                "".join(f"\n=== {f['path']} ===\n{f['content']}\n" for f in files))
-            fixed = extract_json(fix_out)
+                "".join(f"\n@@FILE: {f['path']}@@\n{f['content']}\n@@ENDFILE@@" for f in files) +
+                "\n\n" + ENVELOPE)
+            fixed = parse_file_blocks(fix_out)
             fixed_files = [f for f in (fixed.get("files", []) if fixed else [])
                            if isinstance(f, dict) and f.get("path") and f.get("content")]
             if not fixed_files or any(f["path"] in self.protected_paths for f in fixed_files):
@@ -350,9 +382,12 @@ class Orchestrator:
         if promote.get("merged"):
             # Positive memory: record what was built so the lab knows it exists.
             self.roadmap.add_lesson(f"Built & merged: {change.get('summary','')[:100]}", source_ref=cycle_id)
+            self.cooldown.clear(self._goal_key(goal))   # success clears any cooldown
         if promote.get("held_for_review"):
             approved = False  # a held PR is not a completed merge
             reason = promote.get("merge_detail", "held_for_review: codex blocking finding")
+        if not approved:
+            self.cooldown.record(self._goal_key(goal))  # repeated failures -> cooldown
 
         result.update({
             "action": action, "files": [f["path"] for f in files], "tests_passed": tests_passed,
