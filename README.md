@@ -8,14 +8,14 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T15:07:08+00:00)
+## Live Status (updated 2026-06-07T15:23:42+00:00)
 
-- **Cycles:** 43 — merged 20, rejected 21
-- **Last cycle:** `6605dc1050c6` [rejected] Create policy_engine.py composing existing ecnyss modules for policy-governed ex
+- **Cycles:** 44 — merged 20, rejected 22
+- **Last cycle:** `aa783b6e7b3b` [rejected] Create ecnyss/compose package with pipeline execution and comprehensive tests
 - **Last merge:** `100101156bef` Replaced unittest-based tests with comprehensive pytest-based test suite for ecn
 - **Capability modules (35):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/bench.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/cooldown.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/encoding.py, util/functional.py, util/graphs.py, util/identifiers.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/stats.py, util/test_collections.py, util/test_numbers.py, util/test_trees.py, util/trees.py
 - **Benchmark:** 0.7143 (10/14) (+0.0 vs prev) · 154 symbols / 33 modules
-- **Benchmark trend:** 0.7692 → 0.7143 → 0.7143 → 0.7143 → 0.7143 → 0.7143
+- **Benchmark trend:** 0.7143 → 0.7143 → 0.7143 → 0.7143 → 0.7143 → 0.7143
 <!-- ECNYSS:STATUS:END -->
 
 ## Pipeline

@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T15:23:41+00:00 · `aa783b6e7b3b` · **rejected** · score 0.41
+- Create ecnyss/compose package with pipeline execution and comprehensive tests
+- _why:_ sandbox tests failed | goal: **Goal:** Build `ecnyss/compose/pipeline.py` (+ `ecnyss/compose/__init__.py`): a `run_pipeline(deps, fns)` executor that
+
 ## 2026-06-07T15:07:07+00:00 · `6605dc1050c6` · **rejected** · score 0.83
 - Create policy_engine.py composing existing ecnyss modules for policy-governed execution
 - _why:_ held_for_review: codex flagged P1 | goal: 
