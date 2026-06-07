@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--proposal", default="No-op observation cycle")
     c.add_argument("--why", default="Phase 0 audit-spine smoke cycle")
 
+    sub.add_parser("evolve", help="run one full multi-agent evolve cycle (sandboxed, gated, PR-only)")
     sub.add_parser("verify", help="verify the audit hash chain")
     sub.add_parser("log", help="print recorded cycle artifacts")
 
@@ -42,6 +43,11 @@ def main(argv: list[str] | None = None) -> int:
         result = Orchestrator(root).run_dry_cycle(args.proposal, args.why)
         print(json.dumps(result, indent=2))
         return 0 if result["chain_ok"] else 1
+
+    if args.cmd == "evolve":
+        result = Orchestrator(root).evolve()
+        print(json.dumps(result, indent=2))
+        return 0 if result.get("chain_ok") else 1
 
     chain = HashChain(root / "state" / "evolution_chain.jsonl")
     if args.cmd == "verify":

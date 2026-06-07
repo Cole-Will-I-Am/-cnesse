@@ -1,0 +1,9 @@
+[Unit]
+Description=Ecnyss v2 autonomous engineering lab — one evolve cycle
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/ai-lab/ecnesse
+ExecStart=/root/ai-lab/ecnesse/ops/run_once.sh
+TimeoutStartSec=1200

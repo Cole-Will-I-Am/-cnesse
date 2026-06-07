@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Ecnyss v2 evolve cycle every 20 minutes
+
+[Timer]
+OnCalendar=*:0/20
+Persistent=true
+Unit=ecnyss.service
+
+[Install]
+WantedBy=timers.target
