@@ -1,2 +1,8 @@
-"""Ecnyss v2 — an autonomous engineering lab. Auditable before autonomous."""
-__version__ = "0.0.1"
+"""Ecnyss autonomous engineering lab core package."""
+from ecnyss import policy_engine
+from ecnyss import util
+from ecnyss import kernel
+from ecnyss import memory
+from ecnyss import protocol
+
+__all__ = ["policy_engine", "util", "kernel", "memory", "protocol"]
