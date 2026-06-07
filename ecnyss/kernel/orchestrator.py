@@ -197,13 +197,17 @@ class Orchestrator:
         rollback_ref = self._git("rev-parse", "HEAD").stdout.strip()
         observation = self._observe()
 
+        _, existing_mods = fitness.build_registry(self.root, set())
+        caps = ", ".join(sorted(existing_mods))
         policy = (
-            "BUILD POLICY: Prefer adding a NEW, self-contained capability module under "
-            "ecnyss/ with its own pure-stdlib unit tests. Tests run in a locked-down jail "
-            "with NO network, NO subprocess, NO git, NO systemd-run, NO threads — so test "
-            "PURE LOGIC only. Never write tests that exercise kernel.sandbox / orchestrator "
-            "process-spawning. Put unit tests under tests/ (named test_*.py) so they "
-            "actually run. Keep it small and independently verifiable."
+            "BUILD POLICY — COMPOSE, don't sprawl: build a HIGHER-ORDER capability by "
+            "importing and combining the project's EXISTING modules. Do NOT duplicate or "
+            "recreate anything that already exists; integration and novelty are rewarded, "
+            "smallness is NOT (size is no longer penalised — cohesive larger changes are "
+            f"encouraged). Existing ecnyss modules to build ON (never rebuild): {caps}. "
+            "Tests run in a locked-down jail (NO network/subprocess/git/threads): test PURE "
+            "LOGIC only, put tests under tests/ (test_*.py), and write STRONG tests covering "
+            "edge cases — weak tests are penalised by independent mutation scoring."
         )
         goal = self.agents["architect"].run(
             f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
@@ -294,9 +298,11 @@ class Orchestrator:
         else:  # no explicit verdict: only block if BLOCK present without a PASS
             redteam_blocked = "BLOCK" in rt.upper() and "PASS" not in rt.upper()
 
-        # Score against objectives with measured fitness signals.
-        baseline_tests = fitness.baseline_test_count(self.root)
-        scores = fitness.score(report, files, redteam_blocked, self.objectives, self.root, baseline_tests)
+        # Score against objectives. Mutation score is an INDEPENDENT correctness
+        # signal (do the tests catch injected bugs?) — only meaningful if the
+        # suite currently passes.
+        mutation = self.sandbox.mutation_score(files, action) if tests_passed else 0.0
+        scores = fitness.score(report, files, redteam_blocked, self.objectives, self.root, mutation)
         score = merge_gate.weighted(scores, self.objectives)
 
         # Maintainer (different model) decides.
@@ -328,6 +334,9 @@ class Orchestrator:
             self.roadmap.add_lesson(
                 f"Codex {f['severity']} @ {f['path']}:{f.get('line')}: {f['title']}",
                 source_ref=cycle_id)
+        if promote.get("merged"):
+            # Positive memory: record what was built so the lab knows it exists.
+            self.roadmap.add_lesson(f"Built & merged: {change.get('summary','')[:100]}", source_ref=cycle_id)
         if promote.get("held_for_review"):
             approved = False  # a held PR is not a completed merge
             reason = promote.get("merge_detail", "held_for_review: codex blocking finding")

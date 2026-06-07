@@ -139,6 +139,43 @@ class Sandbox:
             cmd.append("--property=PrivateNetwork=yes")
         return cmd + inner, "systemd-run jail (nobody, no-net, capped)"
 
+    # Mutations likely to still compile, so a surviving mutant means weak tests.
+    _MUTATIONS = [(" == ", " != "), (" != ", " == "), (" < ", " >= "),
+                  (" <= ", " > "), (" and ", " or "), (" or ", " and "),
+                  ("True", "False"), ("False", "True")]
+
+    def mutation_score(self, files: list[dict[str, str]], action: str, budget: int = 5) -> float:
+        """Independent correctness: inject small bugs into the changed code and
+        verify the tests CATCH them. Returns killed/total (0..1); neutral 0.5 if
+        no usable mutants. This is not the coder grading itself."""
+        import py_compile, tempfile, os as _os
+        code_files = [f for f in files if f["path"].endswith(".py") and "test" not in f["path"]]
+        mutants: list[list[dict[str, str]]] = []
+        for cf in code_files:
+            for old, new in self._MUTATIONS:
+                if old in cf["content"] and len(mutants) < budget:
+                    mutated = cf["content"].replace(old, new, 1)
+                    # keep only mutants that still compile
+                    tf = tempfile.NamedTemporaryFile("w", suffix=".py", delete=False)
+                    tf.write(mutated); tf.close()
+                    ok = True
+                    try:
+                        py_compile.compile(tf.name, doraise=True)
+                    except py_compile.PyCompileError:
+                        ok = False
+                    _os.unlink(tf.name)
+                    if ok:
+                        mutants.append([{**f, "content": mutated} if f["path"] == cf["path"] else f
+                                        for f in files])
+        if not mutants:
+            return 0.5
+        killed = 0
+        for mset in mutants:
+            rep = self.evaluate(mset, action)
+            if not rep.get("tests", {}).get("passed", True):
+                killed += 1   # tests failed on the mutant => bug caught
+        return round(killed / len(mutants), 3)
+
     def _run_tests(self, wt_dir: Path) -> dict[str, Any]:
         tests_dir = wt_dir / "tests"
         if not tests_dir.exists() or not any(tests_dir.glob("test_*.py")):

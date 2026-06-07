@@ -4,13 +4,14 @@
 # compares the two; a change that does not improve the weighted score is
 # rejected.
 objectives:
-  correctness: 0.35
-  test_coverage: 0.20
-  maintainability: 0.15
-  simplicity: 0.10
-  capability_gain: 0.10
-  security: 0.10
+  correctness: 0.20       # tests pass in the jail
+  test_strength: 0.20     # INDEPENDENT: do tests catch injected bugs (mutation score)
+  integration: 0.20       # composes the project's own modules (not an isolated leaf)
+  capability_gain: 0.20   # novel capability, penalised for duplication
+  maintainability: 0.10   # cohesion, not brevity
+  security: 0.10          # red team did not block
 
-# Minimum post-test weighted score to merge. With real fitness signals, a
-# solid change scores ~0.6-0.85; this filters out shallow/trivial merges.
-merge_threshold: 0.6
+# Minimum post-test weighted score to merge. Raised so an isolated stub (low
+# integration + modest novelty) falls below it, while a composed, well-tested,
+# novel capability clears comfortably.
+merge_threshold: 0.7
