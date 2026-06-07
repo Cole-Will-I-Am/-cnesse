@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T11:45:59+00:00 · `ef33ed9b5c79` · **merged** · score 0.63
+- Created tests/test_graphs.py with comprehensive unit tests for has_cycle and topological_sort functions covering empty graphs, self-loops, disconnected components, cyclic structures, and valid DAGs.
+- _why:_ approved (score 0.7009 >= 0.0+0.6) | goal: **Goal:** Add `tests/test_graphs.py` with pure-stdlib unit tests covering `has_cycle` and `topological_sort` for empty g
+
 ## 2026-06-07T11:26:49+00:00 · `5dac2a4da46a` · **merged** · score 0.8
 - Created tests/test_intervals.py with comprehensive unit tests for all public functions in ecnyss.util.intervals (contains, intersect, merge, overlap, union). Tests follow existing patterns from ecnyss/util/test_numbers.py using unittest.TestCase with descriptive method names. Includes edge cases for
 - _why:_ approved (score 0.8793 >= 0.0+0.6) | goal: **Goal:** Create `tests/test_intervals.py` with pure-stdlib unit tests for every public function in `ecnyss/util/interva

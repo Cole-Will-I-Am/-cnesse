@@ -8,11 +8,11 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T11:26:49+00:00)
+## Live Status (updated 2026-06-07T11:45:59+00:00)
 
-- **Cycles:** 32 — merged 18, rejected 12
-- **Last cycle:** `5dac2a4da46a` [approved] Created tests/test_intervals.py with comprehensive unit tests for all public fun
-- **Last merge:** `5dac2a4da46a` Created tests/test_intervals.py with comprehensive unit tests for all public fun
+- **Cycles:** 33 — merged 19, rejected 12
+- **Last cycle:** `ef33ed9b5c79` [approved] Created tests/test_graphs.py with comprehensive unit tests for has_cycle and top
+- **Last merge:** `ef33ed9b5c79` Created tests/test_graphs.py with comprehensive unit tests for has_cycle and top
 - **Capability modules (33):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/encoding.py, util/functional.py, util/graphs.py, util/identifiers.py, util/intervals.py, util/itertools.py, util/numbers.py, util/predicates.py, util/results.py, util/stats.py, util/test_collections.py, util/test_numbers.py, util/test_trees.py, util/trees.py
 <!-- ECNYSS:STATUS:END -->
 
