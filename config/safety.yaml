@@ -11,6 +11,16 @@ autonomy:
   require_isolation: true
   repair_loops: 2   # when jailed tests fail, let the coder repair & re-test N times
 
+# External review: Codex (chatgpt-codex-connector) reviews every PR a couple of
+# minutes after it opens. Wait briefly for that review before auto-merging; if it
+# flags a blocking severity, hold the PR (don't merge) for repair/human. Lower
+# severities are merged but harvested into the roadmap for future cycles to fix.
+# Timeout fallback ensures the loop never stalls if Codex is slow/absent.
+codex_review:
+  enabled: true
+  wait_sec: 180
+  block_severities: [P1]
+
 
 # isolation: how generated code is executed during sandbox testing.
 isolation:

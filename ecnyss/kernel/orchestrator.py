@@ -49,6 +49,7 @@ class Orchestrator:
         safety = yaml.safe_load(safety_path.read_text(encoding="utf-8")) if safety_path.exists() else {}
         self.protected_paths = set((safety or {}).get("protected_paths", []))
         self.autonomy = (safety or {}).get("autonomy", {}) or {}
+        self.codex = (safety or {}).get("codex_review", {}) or {}
 
     # ---- helpers -----------------------------------------------------------
     def _observe(self) -> str:
@@ -78,6 +79,42 @@ class Orchestrator:
     def _git(self, *args: str, cwd: Path | None = None, timeout: int = 60) -> subprocess.CompletedProcess:
         return subprocess.run(["git", "-C", str(cwd or self.root), *args],
                               capture_output=True, text=True, timeout=timeout)
+
+    def _codex_findings(self, pr_number: int, wait_sec: int) -> tuple[bool, list[dict[str, Any]]]:
+        """Poll for Codex's PR review (it lands ~2 min after open); return its
+        severity-tagged inline findings. Timeout fallback so the loop never stalls."""
+        import time as _t
+        repo = "Cole-Will-I-Am/-cnesse"
+        deadline = _t.time() + max(0, wait_sec)
+        reviewed = False
+        while _t.time() < deadline:
+            r = subprocess.run(
+                ["gh", "api", f"repos/{repo}/pulls/{pr_number}/reviews",
+                 "--jq", '[.[]|select(.user.login|test("codex";"i"))]|length'],
+                cwd=str(self.root), capture_output=True, text=True, timeout=30)
+            if r.returncode == 0 and r.stdout.strip() not in ("", "0"):
+                reviewed = True
+                break
+            _t.sleep(15)
+        findings: list[dict[str, Any]] = []
+        if reviewed:
+            c = subprocess.run(["gh", "api", f"repos/{repo}/pulls/{pr_number}/comments"],
+                               cwd=str(self.root), capture_output=True, text=True, timeout=30)
+            if c.returncode == 0:
+                import json as _j, re as _re
+                try:
+                    for cm in _j.loads(c.stdout):
+                        m = _re.search(r"P([1-3]) Badge", cm.get("body", ""))
+                        if m:
+                            findings.append({
+                                "severity": f"P{m.group(1)}",
+                                "path": cm.get("path", ""),
+                                "line": cm.get("line"),
+                                "title": cm.get("body", "").split("\n")[0][:160],
+                            })
+                except _j.JSONDecodeError:
+                    pass
+        return reviewed, findings
 
     def _promote(self, cycle_id: str, files: list[dict[str, str]], summary: str,
                  auto_merge_ok: bool = False) -> dict[str, Any]:
@@ -114,9 +151,18 @@ class Orchestrator:
                     cwd=str(self.root), capture_output=True, text=True, timeout=60,
                 )
                 pr_url = pr.stdout.strip() if pr.returncode == 0 else f"(pr_failed: {pr.stderr.strip()[:120]})"
+            # Wait for Codex's review and gate on blocking severities.
+            codex_reviewed, findings, held = False, [], False
+            pr_number = pr_url.rstrip("/").split("/")[-1] if pr_url.startswith("http") else ""
+            if pushed and auto_merge_ok and self.codex.get("enabled") and pr_number.isdigit():
+                codex_reviewed, findings = self._codex_findings(
+                    int(pr_number), int(self.codex.get("wait_sec", 180)))
+                block = set(self.codex.get("block_severities", ["P1"]))
+                held = any(f["severity"] in block for f in findings)
+
             merged = False
             merge_detail = "auto_merge_off" if not auto_merge_ok else "not_attempted"
-            if pushed and auto_merge_ok:
+            if pushed and auto_merge_ok and not held:
                 method = f"--{self.autonomy.get('merge_method', 'squash')}"
                 mg = subprocess.run(
                     ["gh", "pr", "merge", branch, "--repo", "Cole-Will-I-Am/-cnesse",
@@ -124,8 +170,14 @@ class Orchestrator:
                     cwd=str(self.root), capture_output=True, text=True, timeout=90)
                 merged = mg.returncode == 0
                 merge_detail = "merged" if merged else f"merge_failed: {mg.stderr.strip()[:140]}"
+            elif held:
+                merge_detail = "held_for_review: codex flagged " + ",".join(
+                    sorted({f["severity"] for f in findings if f["severity"] in
+                            set(self.codex.get("block_severities", ["P1"]))}))
             return {"promoted": pushed, "branch": branch, "pr_url": pr_url,
-                    "merged": merged, "merge_detail": merge_detail}
+                    "merged": merged, "merge_detail": merge_detail,
+                    "codex_reviewed": codex_reviewed, "codex_findings": findings,
+                    "held_for_review": held}
         finally:
             self._git("worktree", "remove", "--force", str(wt))
 
@@ -271,6 +323,14 @@ class Orchestrator:
         )
         promote = (self._promote(cycle_id, files, change.get("summary", "evolution"), auto_merge_ok)
                    if approved else {"promoted": False})
+        # Learn from Codex: record every finding so future cycles can address it.
+        for f in promote.get("codex_findings", []):
+            self.roadmap.add_lesson(
+                f"Codex {f['severity']} @ {f['path']}:{f.get('line')}: {f['title']}",
+                source_ref=cycle_id)
+        if promote.get("held_for_review"):
+            approved = False  # a held PR is not a completed merge
+            reason = promote.get("merge_detail", "held_for_review: codex blocking finding")
 
         result.update({
             "action": action, "files": [f["path"] for f in files], "tests_passed": tests_passed,
