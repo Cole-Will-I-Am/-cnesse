@@ -94,7 +94,7 @@ class TestUniquePreserveOrder(unittest.TestCase):
         result = unique_preserve_order([])
         self.assertEqual(result, [])
     
-    def test_unique_no_duplicates(self)
+    def test_unique_no_duplicates(self):
         """Test unique when there are no duplicates."""
         result = unique_preserve_order([1, 2, 3])
         self.assertEqual(result, [1, 2, 3])

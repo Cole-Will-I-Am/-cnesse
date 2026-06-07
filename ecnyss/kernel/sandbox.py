@@ -77,6 +77,21 @@ class Sandbox:
             diff_text = self._git("diff", "--cached", cwd=wt_dir).stdout
             report["diff_hash"] = sha256_hex({"diff": diff_text})
 
+            # Compile every applied .py first: catches syntax errors in files that
+            # unittest discovery would miss (e.g. tests placed outside tests/).
+            compile_errs = []
+            for rel in report["applied"]:
+                if rel.endswith(".py"):
+                    cp = subprocess.run(["python3", "-m", "py_compile", rel],
+                                        cwd=str(wt_dir), capture_output=True, text=True)
+                    if cp.returncode != 0:
+                        tail = cp.stderr.strip().splitlines()[-1] if cp.stderr.strip() else "compile error"
+                        compile_errs.append(f"{rel}: {tail}")
+            if compile_errs:
+                report["tests"] = {"passed": False, "detail": "compile errors:\n" + "\n".join(compile_errs)}
+                report["ok"] = False
+                return report
+
             report["tests"] = self._run_tests(wt_dir)
             report["ok"] = report["tests"].get("passed", False)
             return report

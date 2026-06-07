@@ -21,4 +21,16 @@ git pull --rebase --autostash --quiet 2>/dev/null || log "WARN: pull --rebase fa
 PYTHONPATH="$REPO" timeout 1100 python3 -m ecnyss.interfaces.cli evolve >> "$LOG" 2>&1
 rc=$?
 log "═══ CYCLE END rc=$rc ═══"
+
+# Real-time docs: regenerate CHANGELOG.md + README status from the audit chain
+# and publish to main (deterministic, fact-derived — outside the gate).
+git pull --rebase --autostash --quiet 2>/dev/null || true
+PYTHONPATH="$REPO" python3 -m ecnyss.interfaces.cli docs >/dev/null 2>&1 || true
+git add CHANGELOG.md README.md 2>/dev/null || true
+if ! git diff --cached --quiet 2>/dev/null; then
+  git commit -m "docs: refresh changelog + status ($(date -u +%FT%TZ))" \
+    --author="ecnyss <ecnyss@autonomous.local>" --quiet 2>/dev/null || true
+  git push --quiet origin main 2>/dev/null || log "WARN: docs push failed"
+  log "docs refreshed"
+fi
 exit 0

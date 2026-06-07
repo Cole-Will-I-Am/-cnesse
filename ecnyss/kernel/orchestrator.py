@@ -150,7 +150,8 @@ class Orchestrator:
             "ecnyss/ with its own pure-stdlib unit tests. Tests run in a locked-down jail "
             "with NO network, NO subprocess, NO git, NO systemd-run, NO threads — so test "
             "PURE LOGIC only. Never write tests that exercise kernel.sandbox / orchestrator "
-            "process-spawning. Keep it small and independently verifiable."
+            "process-spawning. Put unit tests under tests/ (named test_*.py) so they "
+            "actually run. Keep it small and independently verifiable."
         )
         goal = self.agents["architect"].run(
             f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
