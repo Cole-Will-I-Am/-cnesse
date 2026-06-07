@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T10:04:36+00:00 · `f95916aa0acc` · **merged** · score 0.88
+- Created ecnyss/util/encoding.py with 8 pure-stdlib encoding functions (b64_encode/decode, b64url_encode/decode, hex_encode/decode, percent_encode/decode) and tests/test_encoding.py with comprehensive unit tests covering round-trips, known vectors, edge cases, and error handling.
+- _why:_ approved (score 0.8909 >= 0.0+0.6) | goal: 
+
 ## 2026-06-07T09:43:29+00:00 · `b3eb697408e5` · **merged** · score 0.93
 - Added interval primitives module (ecnyss/util/intervals.py) with 6 pure functions for closed numeric range operations, plus comprehensive pytest unit tests (tests/test_intervals.py) covering 14 test cases for contains, overlap, intersect, merge, and union operations.
 - _why:_ approved (score 0.92 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/intervals.py` with pure-stdlib interval primitives (`merge`, `overlap`, `intersect`, `contain
