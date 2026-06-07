@@ -48,3 +48,4 @@ protected_paths:
   - ecnyss/protocol/hash_chain.py
   - ecnyss/protocol/babel_manifest.py
   - ecnyss/protocol/canonical.py
+  - bench/    # held-out benchmark — the lab must not see or game it

@@ -252,7 +252,10 @@ class Orchestrator:
         # Governance guard: a change touching protected files (its own guardrails,
         # enforcement code, scoring, or ledger) can never be auto-approved. It is
         # recorded as requiring explicit human authorization and never promoted.
-        touched_protected = sorted(f["path"] for f in files if f["path"] in self.protected_paths)
+        def _protected(path: str) -> bool:
+            return any(path.startswith(p) if p.endswith("/") else path == p
+                       for p in self.protected_paths)
+        touched_protected = sorted(f["path"] for f in files if _protected(f["path"]))
         if touched_protected:
             return self._record(
                 cycle_id, basis_ref, rollback_ref, change.get("summary", goal), "rejected",

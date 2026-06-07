@@ -54,7 +54,23 @@ def render_changelog(payloads: list[dict[str, Any]]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render_status(payloads: list[dict[str, Any]], modules: list[str]) -> str:
+def _bench_line(root: Path) -> str:
+    from . import bench
+    h = bench.history(root, 6)
+    if not h:
+        return "- **Benchmark:** (not yet run)"
+    last = h[-1]
+    delta = ""
+    if len(h) >= 2 and h[-2].get("score") is not None:
+        d = round(last["score"] - h[-2]["score"], 3)
+        delta = f" ({'+' if d >= 0 else ''}{d} vs prev)"
+    trend = " → ".join(str(p.get("score")) for p in h)
+    return (f"- **Benchmark:** {last['score']} ({last['passed']}/{last['total']}){delta} · "
+            f"{last['symbols']} symbols / {last['modules']} modules\n"
+            f"- **Benchmark trend:** {trend}")
+
+
+def render_status(payloads: list[dict[str, Any]], modules: list[str], root: Path | None = None) -> str:
     total = len(payloads)
     approved = sum(1 for p in payloads if p.get("approval_state") == "approved")
     rejected = sum(1 for p in payloads if p.get("approval_state") == "rejected")
@@ -69,8 +85,10 @@ def render_status(payloads: list[dict[str, Any]], modules: list[str]) -> str:
         f"- **Last cycle:** `{last.get('cycle_id','—')}` [{last.get('approval_state','—')}] {last.get('proposal','')[:80]}",
         f"- **Last merge:** `{last_merge.get('cycle_id','—')}` {last_merge.get('proposal','')[:80]}",
         f"- **Capability modules ({len(modules)}):** " + ", ".join(m.replace('ecnyss/', '') for m in modules),
-        END,
     ]
+    if root is not None:
+        rows.append(_bench_line(root))
+    rows.append(END)
     return "\n".join(rows)
 
 
@@ -90,7 +108,7 @@ def generate(root: str | Path) -> dict[str, Any]:
     (root / "CHANGELOG.md").write_text(render_changelog(payloads), encoding="utf-8")
     readme_path = root / "README.md"
     readme = readme_path.read_text(encoding="utf-8") if readme_path.exists() else "# Ecnyss v2\n"
-    readme_path.write_text(_splice_status(readme, render_status(payloads, modules)), encoding="utf-8")
+    readme_path.write_text(_splice_status(readme, render_status(payloads, modules, root)), encoding="utf-8")
     return {"cycles": len(payloads), "modules": len(modules)}
 
 

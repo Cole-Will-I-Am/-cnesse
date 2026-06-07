@@ -25,6 +25,7 @@ log "═══ CYCLE END rc=$rc ═══"
 # Real-time docs: regenerate CHANGELOG.md + README status from the audit chain
 # and publish to main (deterministic, fact-derived — outside the gate).
 git pull --rebase --autostash --quiet 2>/dev/null || true
+PYTHONPATH="$REPO" python3 -m ecnyss.interfaces.cli bench >/dev/null 2>&1 || true
 PYTHONPATH="$REPO" python3 -m ecnyss.interfaces.cli docs >/dev/null 2>&1 || true
 git add CHANGELOG.md README.md 2>/dev/null || true
 if ! git diff --cached --quiet 2>/dev/null; then

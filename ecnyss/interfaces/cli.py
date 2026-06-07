@@ -30,6 +30,7 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--why", default="Phase 0 audit-spine smoke cycle")
 
     sub.add_parser("evolve", help="run one full multi-agent evolve cycle (sandboxed, gated, PR-only)")
+    sub.add_parser("bench", help="run the held-out benchmark and record the score")
     sub.add_parser("docs", help="regenerate CHANGELOG.md + README status from the chain")
     sub.add_parser("verify", help="verify the audit hash chain")
     sub.add_parser("log", help="print recorded cycle artifacts")
@@ -49,6 +50,11 @@ def main(argv: list[str] | None = None) -> int:
         result = Orchestrator(root).evolve()
         print(json.dumps(result, indent=2))
         return 0 if result.get("chain_ok") else 1
+
+    if args.cmd == "bench":
+        from . import bench
+        print(json.dumps(bench.run(root)))
+        return 0
 
     if args.cmd == "docs":
         from . import docs
