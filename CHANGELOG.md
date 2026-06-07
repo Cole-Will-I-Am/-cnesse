@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T08:25:50+00:00 · `631a92604275` · **merged** · score 0.88
+- Added ecnyss/util/numbers.py with 7 pure-stdlib numeric primitives (clamp, sign, lerp, normalize, remap, round_to, is_close) and comprehensive unit tests in ecnyss/util/test_numbers.py. Updated ecnyss/util/__init__.py to export new functions. All 28 test cases cover edge cases and error handling.
+- _why:_ approved (score 0.8905 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/numbers.py` with pure-stdlib numeric primitives (clamp, sign, lerp, normalize, remap, round_t
+
 ## 2026-06-07T08:05:41+00:00 · `58b06cb29600` · **merged** · score 0.87
 - Created ecnyss/util/itertools.py with 4 pure-stdlib iterator utilities (batched, pairwise, sliding_window, consume) and tests/test_itertools.py with comprehensive unit tests for each function following the established pattern of util/collections.py and util/functional.py.
 - _why:_ approved (score 0.92 >= 0.0+0.6) | goal: 
