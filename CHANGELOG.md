@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T13:03:37+00:00 · `d1bb471e065b` · **rejected**
+- Composed higher-order merge decision capability by wiring provenance tracking into merge_gate. Modified merge_gate.py to attach Provenance evidence to all decisions, enhanced fitness.py to support composition with merge objectives, and added comprehensive mutation-strong tests in test_merge_gate_pro
+- _why:_ governance change requires explicit human authorization: ['ecnyss/evolution/merge_gate.py']
+
 ## 2026-06-07T12:47:24+00:00 · `7cb79f1ba070` · **rejected** · score 0.7
 - Hardened ecnyss/util/encoding.py with proper URL-safe base64 validation and created comprehensive test suite. Fixed b64url_decode to validate input characters using regex pattern, properly handle padding structure, and reject invalid inputs. Added tests/test_encoding.py with 60+ test cases covering
 - _why:_ score 0.64 below baseline 0.0+0.7 | goal: **Goal:** Harden `ecnyss/util/encoding.py` by fixing the Codex P2 URL-safe base64 validation bug and adding `tests/test_
