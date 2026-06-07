@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T06:44:30+00:00 · `8bbb59f87e33` · **merged** · score 0.89
+- Created ecnyss/util/trees.py with get_in, set_in, update_in, walk functions and ecnyss/util/test_trees.py with 12 pure-logic unit tests
+- _why:_ approved (score 0.8915 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/trees.py` with pure-stdlib nested-structure utilities (`get_in`, `set_in`, `update_in`, `walk
+
 ## 2026-06-07T06:23:58+00:00 · `45fe874da00d` · **rejected** · score 0.38
 - Created ecnyss/util/iterables.py with 4 pure-stdlib utilities (partition, group_by, first, windowed) and tests/test_iterables.py with comprehensive unit tests following existing patterns.
 - _why:_ sandbox tests failed | goal: 
