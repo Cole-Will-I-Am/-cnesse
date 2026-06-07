@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T09:05:45+00:00 · `db0a0a1ee652` · **rejected**
+- 
+- _why:_ coder produced no valid change
+
 ## 2026-06-07T08:43:47+00:00 · `12822b72c514` · **merged** · score 0.92
 - Add ecnyss/util/graphs.py with has_cycle and topological_sort DAG primitives, plus tests/test_graphs.py with 19 pure-logic unit tests
 - _why:_ approved (score 0.9146 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/graphs.py` — pure-stdlib DAG primitives (`topological_sort`, `has_cycle`) with companion `tes
