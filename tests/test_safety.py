@@ -1,8 +1,14 @@
 """Tests for Phase 3 containment: sandbox isolation + governance protection."""
+import os
 import shutil
 import sys
 import unittest
 from pathlib import Path
+
+# These tests spawn git worktrees + systemd-run, which the sandbox jail forbids.
+# Skip them when running INSIDE the jail (the orchestrator sets ECNYSS_IN_JAIL),
+# so a cycle's full-suite run isn't poisoned by the lab's own infra tests.
+IN_JAIL = bool(os.environ.get("ECNYSS_IN_JAIL"))
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -22,6 +28,7 @@ class TestSafetyConfig(unittest.TestCase):
             self.assertIn(p, prot)
 
 
+@unittest.skipIf(IN_JAIL, "process-spawning sandbox tests cannot run inside the jail")
 class TestSandboxIsolation(unittest.TestCase):
     def test_test_cmd_is_jailed_when_available(self):
         sb = Sandbox(ROOT)

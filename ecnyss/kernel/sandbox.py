@@ -111,6 +111,7 @@ class Sandbox:
             f"--property=ReadWritePaths={wt_dir}",
             f"--working-directory={wt_dir}",
             "--setenv=PYTHONDONTWRITEBYTECODE=1",
+            "--setenv=ECNYSS_IN_JAIL=1",
         ]
         if self.iso.get("private_network", True):
             cmd.append("--property=PrivateNetwork=yes")
