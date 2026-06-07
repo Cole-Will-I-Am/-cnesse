@@ -8,12 +8,12 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T07:03:18+00:00)
+## Live Status (updated 2026-06-07T07:25:48+00:00)
 
-- **Cycles:** 19 — merged 6, rejected 11
-- **Last cycle:** `43ae52cfafec` [approved] Created ecnyss/util/diff.py with deep_equal and deep_diff functions, plus ecnyss
-- **Last merge:** `43ae52cfafec` Created ecnyss/util/diff.py with deep_equal and deep_diff functions, plus ecnyss
-- **Capability modules (24):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_trees.py, util/trees.py
+- **Cycles:** 20 — merged 7, rejected 11
+- **Last cycle:** `de879f4dd0e7` [approved] Created ecnyss/util/functional.py with 7 pure-stdlib functional utilities (ident
+- **Last merge:** `de879f4dd0e7` Created ecnyss/util/functional.py with 7 pure-stdlib functional utilities (ident
+- **Capability modules (25):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/functional.py, util/test_collections.py, util/test_dicts.py, util/test_diff.py, util/test_trees.py, util/trees.py
 <!-- ECNYSS:STATUS:END -->
 
 ## Pipeline
