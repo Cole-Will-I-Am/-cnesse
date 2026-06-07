@@ -1,0 +1,13 @@
+# What is Ecnyss working on? Separating self-model from world-model prevents a
+# self-evolving agent from confusing "improve myself" with "improve the target".
+mode: self            # self | target
+target:
+  repo: Cole-Will-I-Am/-cnesse
+  goals:
+    - Strengthen the auditable-before-autonomous foundation.
+    - Increase real test coverage of kernel and protocol.
+    - Improve reliability of the evolve pipeline.
+  constraints:
+    - Never weaken governance, permissions, or the audit chain.
+    - No new third-party dependencies without justification.
+    - Keep every module runnable and tested.

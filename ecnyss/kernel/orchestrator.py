@@ -23,7 +23,11 @@ from ..protocol import CycleArtifact, HashChain, Provenance, Evidence, emit
 from ..cognition.agent import Agent, load_registry, extract_json
 from .permission_model import PermissionModel, Decision
 from .sandbox import Sandbox
+from .self_world import SelfModel, WorldModel
 from ..evolution import merge_gate
+from ..memory.episodic_store import EpisodicStore
+from ..memory.semantic_index import SemanticIndex
+from ..memory.roadmap import Roadmap
 
 
 class Orchestrator:
@@ -35,24 +39,25 @@ class Orchestrator:
         self.sandbox = Sandbox(self.root)
         registry, ollama_url = load_registry(self.root / "config" / "models.yaml")
         self.agents = {role: Agent(role, registry, ollama_url) for role in registry}
+        # Memory tiers + self/world model.
+        self.episodic = EpisodicStore(self.chain)
+        self.semantic = SemanticIndex(self.root, self.root / "state" / "semantic_index.json")
+        self.roadmap = Roadmap(self.root / "state" / "roadmap.json")
+        self.self_model = SelfModel(self.root, self.permissions)
+        self.world_model = WorldModel(self.root / "config" / "world.yaml")
 
     # ---- helpers -----------------------------------------------------------
     def _observe(self) -> str:
-        files = sorted(
-            str(p.relative_to(self.root))
-            for p in self.root.rglob("*.py")
-            if ".git" not in p.parts and "state" not in p.parts
-        )
-        recent = []
-        for line in (self.chain.path.read_text().splitlines()[-5:] if self.chain.path.exists() else []):
-            import json
-            p = json.loads(line)["payload"]
-            recent.append(f"{p['cycle_id']} [{p['approval_state']}] {p['proposal']}")
-        return (
-            f"REPO FILES ({len(files)}):\n" + "\n".join(files) +
-            "\n\nOBJECTIVES (weights):\n" + "\n".join(f"  {k}: {v}" for k, v in self.objectives.items()) +
-            "\n\nRECENT CYCLES:\n" + ("\n".join(recent) or "(none)")
-        )
+        # Refresh semantic memory from source (re-derives changed facts).
+        self.semantic.refresh()
+        return "\n\n".join([
+            self.self_model.summary(),
+            self.world_model.summary(),
+            "OBJECTIVES (weights):\n" + "\n".join(f"  {k}: {v}" for k, v in self.objectives.items()),
+            self.semantic.summary(),
+            self.episodic.summary(5),
+            self.roadmap.summary(),
+        ])
 
     def _read_files(self, paths: list[str], budget: int = 30000) -> str:
         out, used = [], 0
@@ -200,6 +205,9 @@ class Orchestrator:
             approval_state=approval_state, rollback_ref=rollback_ref)
         block = emit(self.chain, art)
         ok, detail = self.chain.verify()
+        # Strategic memory: learn from rejected cycles so we don't repeat them.
+        if approval_state == "rejected":
+            self.roadmap.add_lesson(f"Rejected: {str(proposal)[:80]} ({why[:60]})", source_ref=cycle_id)
         result.update({"approval_state": approval_state, "block_index": block["index"], "chain_ok": ok})
         if extra:
             result.update(extra)
