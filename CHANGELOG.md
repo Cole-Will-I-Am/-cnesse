@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T05:44:04+00:00 · `36fba1f38593` · **rejected** · score 0.35
+- Created ecnyss/util/strings.py with 5 pure string utility functions (slugify, truncate, word_count, camel_to_snake, snake_to_camel) and tests/test_strings.py with comprehensive unit tests for each function class. All code is pure-stdlib, no I/O/network/subprocess, compatible with locked-down test ja
+- _why:_ sandbox tests failed | goal: 
+
 ## 2026-06-07T05:24:13+00:00 · `2d5a84de4680` · **merged** · score 0.9
 - Created ecnyss/util/dicts.py with 4 pure-stdlib dictionary utilities (deep_merge, pick, omit, flatten_keys) and ecnyss/util/test_dicts.py with 20 unit tests covering all functions
 - _why:_ approved (score 0.8973 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/dicts.py` — a self-contained, pure-stdlib dictionary utility module providing `deep_merge`, `

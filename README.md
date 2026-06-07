@@ -8,10 +8,10 @@ governed by Babel-style immutable protocol records.**
 > able to answer: *Why did I do this? What evidence justified it?*
 
 <!-- ECNYSS:STATUS:START -->
-## Live Status (updated 2026-06-07T05:26:02+00:00)
+## Live Status (updated 2026-06-07T05:44:04+00:00)
 
-- **Cycles:** 14 — merged 4, rejected 8
-- **Last cycle:** `2d5a84de4680` [approved] Created ecnyss/util/dicts.py with 4 pure-stdlib dictionary utilities (deep_merge
+- **Cycles:** 15 — merged 4, rejected 9
+- **Last cycle:** `36fba1f38593` [rejected] Created ecnyss/util/strings.py with 5 pure string utility functions (slugify, tr
 - **Last merge:** `2d5a84de4680` Created ecnyss/util/dicts.py with 4 pure-stdlib dictionary utilities (deep_merge
 - **Capability modules (21):** cognition/agent.py, evolution/fitness.py, evolution/merge_gate.py, interfaces/cli.py, interfaces/docs.py, kernel/orchestrator.py, kernel/permission_model.py, kernel/sandbox.py, kernel/self_world.py, memory/entry.py, memory/episodic_store.py, memory/roadmap.py, memory/semantic_index.py, protocol/babel_manifest.py, protocol/canonical.py, protocol/hash_chain.py, protocol/provenance.py, util/collections.py, util/dicts.py, util/test_collections.py, util/test_dicts.py
 <!-- ECNYSS:STATUS:END -->
