@@ -11,5 +11,6 @@ objectives:
   capability_gain: 0.10
   security: 0.10
 
-# Minimum post-test weighted score improvement over baseline to merge.
-merge_threshold: 0.0
+# Minimum post-test weighted score to merge. With real fitness signals, a
+# solid change scores ~0.6-0.85; this filters out shallow/trivial merges.
+merge_threshold: 0.6

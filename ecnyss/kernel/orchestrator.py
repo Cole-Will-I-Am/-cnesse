@@ -24,7 +24,7 @@ from ..cognition.agent import Agent, load_registry, extract_json
 from .permission_model import PermissionModel, Decision
 from .sandbox import Sandbox
 from .self_world import SelfModel, WorldModel
-from ..evolution import merge_gate
+from ..evolution import merge_gate, fitness
 from ..memory.episodic_store import EpisodicStore
 from ..memory.semantic_index import SemanticIndex
 from ..memory.roadmap import Roadmap
@@ -149,12 +149,21 @@ class Orchestrator:
             f"Choose this cycle's single highest-leverage goal.\n\n{observation}")
         plan = self.agents["planner"].run(
             f"GOAL:\n{goal}\n\n{observation}\n\nProduce a minimal one-cycle change spec (<=3 files + which tests verify it).")
-        # Coder gets the plan plus current content of any files it likely needs.
+        # Coder gets the plan, the list of files that ALREADY EXIST (so it uses
+        # modify, never recreates), and the current content of likely targets.
         import re
-        hinted = [f for f in re.findall(r"[\w/]+\.py", plan)][:3]
+        existing = sorted(
+            str(p.relative_to(self.root))
+            for p in self.root.rglob("*.py")
+            if ".git" not in p.parts and "state" not in p.parts
+        )
+        hinted = [f for f in re.findall(r"[\w/]+\.py", plan) if f in existing][:3]
         coder_out = self.agents["coder"].run(
-            f"PLAN:\n{plan}\n\nCURRENT FILES:\n{self._read_files(hinted)}\n\n"
-            "Return ONLY the strict JSON change object.")
+            f"PLAN:\n{plan}\n\nEXISTING FILES (use action=modify and return the FULL "
+            f"updated file for any of these; only use action=create for a brand-new path "
+            f"NOT in this list):\n" + "\n".join(existing) +
+            f"\n\nCURRENT CONTENT OF LIKELY TARGETS:\n{self._read_files(hinted)}\n\n"
+            "Return ONLY the strict JSON change object with COMPLETE file content.")
         change = extract_json(coder_out)
 
         result: dict[str, Any] = {"cycle_id": cycle_id, "goal": goal[:200]}
@@ -164,8 +173,12 @@ class Orchestrator:
                                  evidence=[Evidence("coder", basis_ref, "invalid/empty JSON", 0.2)],
                                  result=result, extra={"rejected": "no_valid_change"})
 
-        action = str(change.get("action", "modify"))
         files = [f for f in change["files"] if isinstance(f, dict) and f.get("path") and f.get("content")]
+        # Deterministically correct the action: if any target already exists it's a
+        # modify (overwrite), never a create — prevents self-inflicted "file exists"
+        # rejections regardless of what the coder labelled it.
+        any_exists = any((self.root / f["path"]).exists() for f in files)
+        action = "modify" if any_exists else "create"
 
         # Governance guard: a change touching protected files (its own guardrails,
         # enforcement code, scoring, or ledger) can never be auto-approved. It is
@@ -188,8 +201,9 @@ class Orchestrator:
             f"TEST RESULT: {report.get('tests', {}).get('detail','')}\n\nFind risks. End with verdict BLOCK or PASS.")
         redteam_blocked = "BLOCK" in rt.upper().split("PASS")[0][-400:] if "BLOCK" in rt.upper() else False
 
-        # Score against objectives.
-        scores = merge_gate.score_change(report, action, redteam_blocked, self.objectives)
+        # Score against objectives with measured fitness signals.
+        baseline_tests = fitness.baseline_test_count(self.root)
+        scores = fitness.score(report, files, redteam_blocked, self.objectives, self.root, baseline_tests)
         score = merge_gate.weighted(scores, self.objectives)
 
         # Maintainer (different model) decides.
