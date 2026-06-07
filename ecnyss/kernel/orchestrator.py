@@ -145,10 +145,17 @@ class Orchestrator:
         rollback_ref = self._git("rev-parse", "HEAD").stdout.strip()
         observation = self._observe()
 
+        policy = (
+            "BUILD POLICY: Prefer adding a NEW, self-contained capability module under "
+            "ecnyss/ with its own pure-stdlib unit tests. Tests run in a locked-down jail "
+            "with NO network, NO subprocess, NO git, NO systemd-run, NO threads — so test "
+            "PURE LOGIC only. Never write tests that exercise kernel.sandbox / orchestrator "
+            "process-spawning. Keep it small and independently verifiable."
+        )
         goal = self.agents["architect"].run(
-            f"Choose this cycle's single highest-leverage goal.\n\n{observation}")
+            f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
         plan = self.agents["planner"].run(
-            f"GOAL:\n{goal}\n\n{observation}\n\nProduce a minimal one-cycle change spec (<=3 files + which tests verify it).")
+            f"GOAL:\n{goal}\n\n{policy}\n\n{observation}\n\nProduce a minimal one-cycle change spec (<=3 files + which pure-logic tests verify it).")
         # Coder gets the plan, the list of files that ALREADY EXIST (so it uses
         # modify, never recreates), and the current content of likely targets.
         import re
@@ -159,7 +166,7 @@ class Orchestrator:
         )
         hinted = [f for f in re.findall(r"[\w/]+\.py", plan) if f in existing][:3]
         coder_out = self.agents["coder"].run(
-            f"PLAN:\n{plan}\n\nEXISTING FILES (use action=modify and return the FULL "
+            f"PLAN:\n{plan}\n\n{policy}\n\nEXISTING FILES (use action=modify and return the FULL "
             f"updated file for any of these; only use action=create for a brand-new path "
             f"NOT in this list):\n" + "\n".join(existing) +
             f"\n\nCURRENT CONTENT OF LIKELY TARGETS:\n{self._read_files(hinted)}\n\n"

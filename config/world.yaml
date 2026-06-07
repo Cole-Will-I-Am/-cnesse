@@ -4,10 +4,17 @@ mode: self            # self | target
 target:
   repo: Cole-Will-I-Am/-cnesse
   goals:
-    - Strengthen the auditable-before-autonomous foundation.
-    - Increase real test coverage of kernel and protocol.
-    - Improve reliability of the evolve pipeline.
+    - Add new, self-contained capability modules under ecnyss/ (e.g. analysis,
+      reporting, metrics, utilities) that provide real, reusable functionality.
+    - Each new module ships with its own pure-stdlib unit tests that pass in
+      isolation.
+    - Prefer small, independently-verifiable capability gains each cycle.
   constraints:
     - Never weaken governance, permissions, or the audit chain.
     - No new third-party dependencies without justification.
     - Keep every module runnable and tested.
+    - Do NOT write tests that invoke the sandbox, systemd-run, git, subprocess,
+      threads, or the network — the test jail forbids all of these, so such
+      tests will fail. Test pure logic only.
+    - Do not add tests for kernel.sandbox / kernel.orchestrator behaviour that
+      requires spawning processes; cover them with pure-function unit tests only.
