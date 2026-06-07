@@ -45,6 +45,9 @@ class Orchestrator:
         self.roadmap = Roadmap(self.root / "state" / "roadmap.json")
         self.self_model = SelfModel(self.root, self.permissions)
         self.world_model = WorldModel(self.root / "config" / "world.yaml")
+        safety_path = self.root / "config" / "safety.yaml"
+        safety = yaml.safe_load(safety_path.read_text(encoding="utf-8")) if safety_path.exists() else {}
+        self.protected_paths = set((safety or {}).get("protected_paths", []))
 
     # ---- helpers -----------------------------------------------------------
     def _observe(self) -> str:
@@ -143,6 +146,17 @@ class Orchestrator:
 
         action = str(change.get("action", "modify"))
         files = [f for f in change["files"] if isinstance(f, dict) and f.get("path") and f.get("content")]
+
+        # Governance guard: a change touching protected files (its own guardrails,
+        # enforcement code, scoring, or ledger) can never be auto-approved. It is
+        # recorded as requiring explicit human authorization and never promoted.
+        touched_protected = sorted(f["path"] for f in files if f["path"] in self.protected_paths)
+        if touched_protected:
+            return self._record(
+                cycle_id, basis_ref, rollback_ref, change.get("summary", goal), "rejected",
+                why=f"governance change requires explicit human authorization: {touched_protected}",
+                evidence=[Evidence("governance", basis_ref, f"protected paths: {touched_protected}", 1.0)],
+                result=result, extra={"governance_change": touched_protected, "approved": False})
 
         # Sandbox: verify before promote.
         report = self.sandbox.evaluate(files, action)

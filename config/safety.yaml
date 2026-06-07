@@ -1,0 +1,26 @@
+# Safety + containment policy.
+# isolation: how generated code is executed during sandbox testing.
+isolation:
+  enabled: true
+  uid: 65534           # nobody
+  gid: 65534           # nogroup
+  memory_max: "1G"
+  cpu_quota: "90%"
+  tasks_max: 256
+  runtime_max_sec: 240
+  private_network: true   # generated code gets NO network during tests
+
+# Governance-critical files. A cycle that proposes changing any of these is
+# NOT auto-approvable — it is recorded as requiring explicit human
+# authorization, so the autonomous pipeline can never unlock its own guardrails
+# or rewrite its own enforcement/scoring/ledger code and present it as "ready".
+protected_paths:
+  - config/permissions.yaml
+  - config/objectives.yaml
+  - config/world.yaml
+  - config/safety.yaml
+  - ecnyss/kernel/permission_model.py
+  - ecnyss/kernel/sandbox.py
+  - ecnyss/evolution/merge_gate.py
+  - ecnyss/protocol/hash_chain.py
+  - ecnyss/protocol/babel_manifest.py
