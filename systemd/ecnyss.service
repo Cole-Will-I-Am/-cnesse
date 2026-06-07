@@ -5,5 +5,8 @@ After=network-online.target
 [Service]
 Type=oneshot
 WorkingDirectory=/root/ai-lab/ecnesse
+# HOME is required so git finds the global credential helper (gh auth
+# git-credential) and can push/merge under the minimal systemd environment.
+Environment=HOME=/root
 ExecStart=/root/ai-lab/ecnesse/ops/run_once.sh
 TimeoutStartSec=1200

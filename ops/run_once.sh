@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Ecnyss v2 — one evolve cycle. Sandboxed, gated, PR-only. Never pushes main.
 set -uo pipefail
+export HOME="${HOME:-/root}"   # ensure git finds the gh credential helper
 REPO="/root/ai-lab/ecnesse"
 LOG="/var/log/ecnyss/cycle.log"
 LOCK="/tmp/ecnyss-cycle.lock"

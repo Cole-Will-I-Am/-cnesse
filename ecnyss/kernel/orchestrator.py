@@ -101,6 +101,9 @@ class Orchestrator:
                       "--author=ecnyss <ecnyss@autonomous.local>", cwd=wt)
             push = self._git("push", "-q", "-u", "origin", branch, cwd=wt, timeout=90)
             pushed = push.returncode == 0
+            if not pushed:
+                return {"promoted": False, "branch": branch,
+                        "push_error": push.stderr.strip()[:200] or "push failed"}
             pr_url = ""
             if pushed:
                 pr = subprocess.run(
