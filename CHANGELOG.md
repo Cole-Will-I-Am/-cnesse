@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T12:23:59+00:00 · `2fbe183c4981` · **rejected**
+- 
+- _why:_ coder produced no valid change
+
 ## 2026-06-07T12:07:58+00:00 · `f29a5064d6a3` · **rejected** · score 0.7
 - Created ecnyss/util/diff.py with deep_equal and deep_diff functions that handle nested structures, cycles, special floats (NaN, inf, -0.0), type mismatches, and custom predicates. Created comprehensive tests in tests/test_diff.py covering all edge cases including cycles, special floats, type mismatc
 - _why:_ score 0.64 below baseline 0.0+0.7 | goal: **Goal:** Create `ecnyss/util/diff.py` providing `deep_equal` and `deep_diff` by composing existing `trees`, `dicts`, `c
