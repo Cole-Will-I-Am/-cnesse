@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T12:07:58+00:00 · `f29a5064d6a3` · **rejected** · score 0.7
+- Created ecnyss/util/diff.py with deep_equal and deep_diff functions that handle nested structures, cycles, special floats (NaN, inf, -0.0), type mismatches, and custom predicates. Created comprehensive tests in tests/test_diff.py covering all edge cases including cycles, special floats, type mismatc
+- _why:_ score 0.64 below baseline 0.0+0.7 | goal: **Goal:** Create `ecnyss/util/diff.py` providing `deep_equal` and `deep_diff` by composing existing `trees`, `dicts`, `c
+
 ## 2026-06-07T11:45:59+00:00 · `ef33ed9b5c79` · **merged** · score 0.63
 - Created tests/test_graphs.py with comprehensive unit tests for has_cycle and topological_sort functions covering empty graphs, self-loops, disconnected components, cyclic structures, and valid DAGs.
 - _why:_ approved (score 0.7009 >= 0.0+0.6) | goal: **Goal:** Add `tests/test_graphs.py` with pure-stdlib unit tests covering `has_cycle` and `topological_sort` for empty g
