@@ -134,6 +134,7 @@ class Sandbox:
             f"--working-directory={wt_dir}",
             "--setenv=PYTHONDONTWRITEBYTECODE=1",
             "--setenv=ECNYSS_IN_JAIL=1",
+            "--setenv=ECNYSS_SCRATCH=/tmp",   # writable (PrivateTmp) scratch for I/O-capable code
         ]
         if self.iso.get("private_network", True):
             cmd.append("--property=PrivateNetwork=yes")

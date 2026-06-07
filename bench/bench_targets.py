@@ -47,5 +47,21 @@ class SchemaValidate(unittest.TestCase):
         self.assertTrue(validate({"name": "x"}, spec).is_err())
 
 
+class FileBackedStore(unittest.TestCase):
+    """Target: ecnyss/store/kv.py — a file-backed KVStore(path) with put/get/
+    delete that PERSISTS to disk (real I/O), so a new instance on the same path
+    sees prior writes. Exercises the newly-unlocked file-I/O capability."""
+    def test_persists_across_instances(self):
+        import os, tempfile
+        from ecnyss.store.kv import KVStore
+        path = os.path.join(tempfile.mkdtemp(), "kv.json")
+        s = KVStore(path)
+        s.put("k", {"v": 1})
+        again = KVStore(path)          # fresh instance, same file
+        self.assertEqual(again.get("k"), {"v": 1})
+        again.delete("k")
+        self.assertIsNone(KVStore(path).get("k"))
+
+
 if __name__ == "__main__":
     unittest.main()

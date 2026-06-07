@@ -22,6 +22,16 @@ codex_review:
   block_severities: [P1]
 
 
+# Sandbox tiers (capability vs containment):
+#   controlled (ACTIVE): the systemd-run jail below — non-root (nobody), no
+#     network, fs read-only except the worktree + a private writable /tmp
+#     ($ECNYSS_SCRATCH), resource/time capped. SAFELY permits file I/O,
+#     local subprocess, and threads — so the lab can build stateful capabilities
+#     that act, not just pure functions.
+#   networked (FUTURE, human-gated): an allowlisted network namespace + mocked
+#     tools. NOT enabled: outbound network for auto-merged, model-written code is
+#     a deliberate escalation that must be designed + human-approved, not default.
+#
 # isolation: how generated code is executed during sandbox testing.
 isolation:
   enabled: true

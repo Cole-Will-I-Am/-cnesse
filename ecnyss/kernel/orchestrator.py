@@ -200,14 +200,19 @@ class Orchestrator:
         _, existing_mods = fitness.build_registry(self.root, set())
         caps = ", ".join(sorted(existing_mods))
         policy = (
-            "BUILD POLICY — COMPOSE, don't sprawl: build a HIGHER-ORDER capability by "
-            "importing and combining the project's EXISTING modules. Do NOT duplicate or "
-            "recreate anything that already exists; integration and novelty are rewarded, "
-            "smallness is NOT (size is no longer penalised — cohesive larger changes are "
-            f"encouraged). Existing ecnyss modules to build ON (never rebuild): {caps}. "
-            "Tests run in a locked-down jail (NO network/subprocess/git/threads): test PURE "
-            "LOGIC only, put tests under tests/ (test_*.py), and write STRONG tests covering "
-            "edge cases — weak tests are penalised by independent mutation scoring."
+            "BUILD POLICY — COMPOSE into capabilities that ACT: build a HIGHER-ORDER "
+            "capability by importing and combining the project's EXISTING modules. Do NOT "
+            "duplicate anything that exists; integration and novelty are rewarded, smallness "
+            f"is NOT. Existing ecnyss modules to build ON (never rebuild): {caps}. "
+            "Tests run in an isolated, non-root, resource-capped jail. You MAY now use: real "
+            "FILE I/O (use tempfile or $ECNYSS_SCRATCH for scratch files), local SUBPROCESS, "
+            "and THREADS — so build stateful things (stores, serializers, parsers, file-backed "
+            "registries, processing pipelines, concurrency helpers), not just pure functions. "
+            "You may NOT use the NETWORK (it is blocked), and must not write tests that spawn "
+            "git/systemd-run or invoke kernel.sandbox/orchestrator. Put tests under tests/ "
+            "(test_*.py); write STRONG tests (edge cases + real round-trips) — weak tests are "
+            "penalised by independent mutation scoring. A NEW subpackage (e.g. ecnyss/store/) "
+            "MUST include an __init__.py or imports will fail."
         )
         goal = self.agents["architect"].run(
             f"Choose this cycle's single highest-leverage goal.\n\n{policy}\n\n{observation}")
