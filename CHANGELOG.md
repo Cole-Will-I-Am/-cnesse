@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T08:05:41+00:00 · `58b06cb29600` · **merged** · score 0.87
+- Created ecnyss/util/itertools.py with 4 pure-stdlib iterator utilities (batched, pairwise, sliding_window, consume) and tests/test_itertools.py with comprehensive unit tests for each function following the established pattern of util/collections.py and util/functional.py.
+- _why:_ approved (score 0.92 >= 0.0+0.6) | goal: 
+
 ## 2026-06-07T07:43:31+00:00 · `d6ef9ca34485` · **merged** · score 0.93
 - Added Result monad module (ecnyss/util/results.py) with Ok/Err variants, map/bind operations, and comprehensive unit tests (tests/test_results.py). Updated ecnyss/util/__init__.py to export Result types. Pure stdlib implementation with frozen dataclasses and Python 3.12+ type syntax.
 - _why:_ approved (score 0.92 >= 0.0+0.6) | goal: **Goal:** Add `ecnyss/util/results.py` — a pure-stdlib `Result[T, E]` monad (`Ok`, `Err`, `map`, `bind`, `unwrap_or`, `i
