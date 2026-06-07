@@ -2,6 +2,10 @@
 
 _Auto-generated every cycle from the audit chain. Newest first._
 
+## 2026-06-07T14:26:30+00:00 · `12221ffbefd5` · **rejected**
+- **Goal:** Build `ecnyss/store/kv.py` and `ecnyss/store/__init__.py`: a file-backed `KVStore(path)` exposing `put`/`get`/`delete`, persisting via real file I/O under `tempfile`/`$ECNYSS_SCRATCH`, returning `ecnyss.util.results.Result`, serializing values with `ecnyss.protocol.canonical`, and validati
+- _why:_ coder produced no valid change
+
 ## 2026-06-07T14:06:14+00:00 · `566d29d8a439` · **rejected**
 - **Goal:** Build `ecnyss/store/kv.py` (+ `ecnyss/store/__init__.py`): a file-backed `KVStore` that persists to disk, composing `ecnyss.canonical` for serialization and `ecnyss.util.results` for error handling. Ship `tests/test_kv.py` with cross-instance round-trip and crash-consistency assertions.
 
